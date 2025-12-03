@@ -28,10 +28,24 @@ def build_corpus(keyword):
 
 if __name__ == "__main__":
     
-    build_corpus("python")  # Build corpus from keyword
+    #build_corpus("python")  # Build corpus from keyword
+    
     
     corpus = Corpus("API Corpus")
     corpus.load("corpus.csv")  # Load saved CSV
 
-    print("\n--- Sorted by date ---")
-    corpus.show_by_date()      # Show documents by date
+
+    #print("\n---- Sorted by date -------\n")
+    #corpus.show_by_date()      # Show documents by date
+
+    
+    #print("\n---- Recherche A Word -------\n")
+    #print(corpus.search("Python"))
+
+
+    #print("\n---- Corcorder The Words -------\n")
+    #print(corpus.concorde("Python"))
+    
+     
+    #print("\n---- Top 10 Words in Corpus -------\n")
+    #corpus.stats(10)
