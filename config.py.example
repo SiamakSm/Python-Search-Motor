@@ -1,5 +1,12 @@
-# config.py
-# Local API keys (Put Your Keys)
+# config.py (example)
+# Template file for storing your local API keys.
+
+
+# Copy this file as "config.py" and replace the placeholder values
+# with your personal API keys.
+# Do NOT commit your real keys to GitHub.
+
+
 
 REDDIT_CLIENT_ID = "YOUR_CLIENT_ID"
 REDDIT_SECRET = "YOUR_SECRET"
