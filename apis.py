@@ -11,9 +11,9 @@ from config import REDDIT_CLIENT_ID, REDDIT_SECRET, REDDIT_USER_AGENT
 
 def fetch_reddit(keyword, limit=20):
     reddit = praw.Reddit(
-        client_id="YOUR_CLIENT_ID",
-        client_secret="YOUR_CLIENT_SECRET",
-        user_agent="YOUR_USER_AGENT",
+        client_id=REDDIT_CLIENT_ID,
+        client_secret=REDDIT_SECRET,
+        user_agent=REDDIT_USER_AGENT,
     )
 
     posts = reddit.subreddit("all").search(keyword, limit=limit)
