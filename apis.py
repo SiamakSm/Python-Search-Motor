@@ -1,6 +1,6 @@
 # apis.py
 # Utility functions to fetch documents from Reddit and arXiv APIs.
-#Add your API keys from the website so you can fetch data from these APIs.
+#Add your API keys from the website so you can fetch data from these APIs
 
 
 import praw
