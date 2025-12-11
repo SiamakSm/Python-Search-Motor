@@ -1,8 +1,7 @@
 # Corpus.py
 # Corpus class (singleton) that stores all documents and authors.
-# It handles: creating a unique shared corpus instance, adding documents,
-# tracking authors, loading documents from a CSV file, and displaying
-# documents sorted by date.
+# TD6 : chargement / stats / recherche simple
+# TD7 : ajout du vocabulaire pour moteur de recherche (SearchEngine)
 
 import pandas as pd
 import datetime
@@ -98,6 +97,7 @@ class Corpus:
     
            
     def search(self, keysword):
+        # TD6 : petite recherche textuelle globale
         allText = self.get_all_text()
         pattern = re.compile(re.escape(keysword), re.IGNORECASE)
         results = []
@@ -117,19 +117,20 @@ class Corpus:
         data = []
 
         for match in pattern.finditer(allText):
-            start_index = max(0, match.start() - 10)
-            end_index = min(len(allText), match.end() + 10)
+            start_index = max(0, match.start() - size)
+            end_index = min(len(allText), match.end() + size)
 
             leftContext = allText[start_index:match.start()]
             rightContext = allText[match.end():end_index]
             snippet = allText[match.start():match.end()].replace('\n', ' ')
 
             data.append([f"...{leftContext} ", f"    {snippet}   ", f"       {rightContext}...."])
-            df = pd.DataFrame(data, columns=["Context de gauche", "motif touvé", "Context de droit" ])            
+            df = pd.DataFrame(data, columns=["Context de gauche", "motif trouvé", "Context de droite" ])            
         return df
     
     
-    def nettoyer_texte(texte):
+    # ---------- TD7 : nettoyage utilisé par stats + moteur de recherche ----------
+    def nettoyer_texte(self, texte):
         texte = texte.lower()
         texte = texte.replace('\n', ' ')
         texte = re.sub(r'[0-9]+', ' ', texte)
@@ -141,50 +142,54 @@ class Corpus:
     def stats(self, n_top=10):
         vocabulaire = set() # Pour éliminer les doublons
         mots_comptes = {}   # Pour stocker le nombre d'occurrences (Term Frequency)
-        doc_compte = {}      # Pour stocker le nombre de documents (Document Frequency)
+        doc_compte = {}     # Pour stocker le nombre de documents (Document Frequency)
         
         for doc in self.id2doc.values():
-            # Nettoyage et segmentation du texte 
-            texte_nettoye = Corpus.nettoyer_texte(str(doc.texte))
-            # Utiliser split pour délimiter par les espaces 
-            mots = texte_nettoye.split() 
+            texte_nettoye = self.nettoyer_texte(str(doc.texte))
+            mots = texte_nettoye.split()
             
-            # --- 2.2 Construction du vocabulaire ---
-            # Utilisation du set pour le vocabulaire
             doc_vocab = set(mots)
             vocabulaire.update(doc_vocab)
             
-            # --- 2.3 Comptage des occurrences 
             for mot in mots:
                 if mot in mots_comptes:
                     mots_comptes[mot] += 1
                 else:
                     mots_comptes[mot] = 1
 
-            # --- 2.4 Comptage de la fréquence de documents
             for mot in doc_vocab:
                 if mot in doc_compte:
                     doc_compte[mot] += 1
                 else:
                     doc_compte[mot] = 1
 
-        # Affichage du nombre de mots différents 
         print(f"--- Statistiques du Corpus '{self.nom}' ---")
         print(f"Nombre de mots différents (Taille du vocabulaire) : {len(vocabulaire)}")
         
-        # Construction du DataFrame 'freq' [cite: 30]
-        # Création d'une série Pandas à partir du dictionnaire de comptage
         freq_series = pd.Series(mots_comptes)
         df_freq = pd.DataFrame(freq_series, columns=['Term Frequency (TF)'])
         df_freq.index.name = 'Mot'
         
-        # Ajout de la colonne Document Frequency (DF) [cite: 31]
         df_freq['Document Frequency (DF)'] = pd.Series(doc_compte)
-        
-        # Tri et affichage des n mots les plus fréquents [cite: 18]
         df_top_n = df_freq.sort_values(by='Term Frequency (TF)', ascending=False).head(n_top)
         
         print(f"\n--- {n_top} mots les plus fréquents ---")
         print(df_top_n)
         
         return df_freq
+
+    
+    # ---------- TD7 : vocabulaire (Partie 1.1) ----------
+    def vocab(self):
+        vocab = {}
+        index = 0
+
+        for doc in self.id2doc.values():
+            texte = self.nettoyer_texte(str(doc.texte))
+            for mot in texte.split():
+                if mot not in vocab:
+                    vocab[mot] = {"id": index, "total_occ": 0, "doc_occ": 0}
+                    index += 1
+
+        print("Nombre de mots du vocabulaire :", len(vocab))
+        return vocab
