@@ -4,6 +4,7 @@
 from collections import Counter
 import math
 import pandas as pd
+from tqdm import tqdm
 
 
 class SearchEngine:
@@ -133,11 +134,14 @@ class SearchEngine:
         q_vec = self.build_query_vector(query)
 
         scores = []
-        for doc_id in range(self.corpus.ndoc):
-            d_vec = self.mat_TFxIDF[doc_id]
-            s = self.cosine(q_vec, d_vec)
-            scores.append((doc_id, s))
+        nb_docs = self.corpus.ndoc
 
+        # Similarité cosinus pour chaque document
+        for doc_id in tqdm(range(nb_docs), desc="Recherche"):
+            d_vec = self.mat_TFxIDF[doc_id]
+            score = self.cosine(q_vec, d_vec)
+            scores.append((doc_id, score))
+            
         scores = sorted(scores, key=lambda x: x[1], reverse=True)
         scores = [s for s in scores if s[1] > 0]
         top = scores[:k]
