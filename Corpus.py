@@ -46,7 +46,7 @@ class Corpus:
 
     def load(self, chemin="corpus.csv"):
         # Load documents from a CSV and reconstruct objects via factoryClass
-        df = pd.read_csv(chemin, sep=";")
+        df = pd.read_csv(chemin, sep="\t")
 
         for _, row in df.iterrows():
             # Convert date string into datetime
