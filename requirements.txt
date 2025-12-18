@@ -41,4 +41,6 @@ update-checker==0.18.0
 urllib3==2.5.0
 wcwidth==0.2.14
 websocket-client==1.9.0
+aqdm
+matplotlib
 xmltodict==1.0.2
