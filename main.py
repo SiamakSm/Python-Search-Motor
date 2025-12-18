@@ -22,7 +22,7 @@ def build_corpus(keyword):
         "id", "titre", "auteur", "date", "url", "texte", "type", "extra"
     ])
     
-    df.to_csv("corpus.csv", sep=";", index=False)
+    df.to_csv("corpus.csv", sep="\t", index=False)
     print("\nAPI Corpus saved in corpus.csv\n")
 
 
